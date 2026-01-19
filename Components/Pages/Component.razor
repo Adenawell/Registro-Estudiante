@@ -1,0 +1,123 @@
+﻿@page "/"
+@page "/Estudiante/Index"
+
+@using Models
+@using Services
+
+@inject EstudiantesServices estudiantesService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Estudiantes</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title m-0">Registro de Estudiantes</h5>
+            <button class="btn btn-primary" @onclick="IrACrear">
+                <i class="bi bi-person-plus-fill"></i>
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3 align-items-end">
+                <div class="col-md-3">
+                    <label>Filtrar por</label>
+                    <select class="form-select" @bind="Filtro">
+                        <option value="">Elija una opción</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="Email">Email</option>
+                        <option value="Edad">Edad</option>
+                    </select>
+                </div>
+
+                <div class="col-md-9">
+                    <label>Búsqueda</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar..." @bind="ValorFiltro" />
+                        <button class="btn btn-outline-primary" @onclick="Buscar">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Edad</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ListaEstudiantes != null)
+                        {
+                            @foreach (var item in ListaEstudiantes)
+                            {
+                                <tr>
+                                    <td>@item.EstudianteId</td>
+                                    <td class="text-start">@item.EstudiantesNames</td>
+                                    <td class="text-start">@item.Emails</td>
+                                    <td>@item.Edad</td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" @onclick="() => IrAEditar(item.EstudianteId)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <label><strong>Cantidad:</strong> @(ListaEstudiantes?.Count ?? 0)</label>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Estudiantes> ListaEstudiantes { get; set; } = new List<Estudiantes>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEstudiantes = await estudiantesService.Listar(e => e.EstudianteId > 0);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(ValorFiltro))
+        {
+            if (Filtro == "Nombre")
+            {
+                ListaEstudiantes = await estudiantesService.Listar(e => e.EstudiantesNames.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+            else if (Filtro == "Email")
+            {
+                ListaEstudiantes = await estudiantesService.Listar(e => e.Emails.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+            else if (Filtro == "Edad")
+            {
+                if (int.TryParse(ValorFiltro, out int edad))
+                {
+                    ListaEstudiantes = await estudiantesService.Listar(e => e.Edad == edad);
+                }
+            }
+        }
+        else
+        {
+            ListaEstudiantes = await estudiantesService.Listar(e => e.EstudianteId > 0);
+        }
+    }
+
+    private void IrACrear() => NavigationManager.NavigateTo("/Estudiante/Create");
+    private void IrAEditar(int id) => NavigationManager.NavigateTo($"/Estudiante/Edit/{id}");
+}

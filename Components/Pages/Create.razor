@@ -1,0 +1,88 @@
+﻿@page "/Estudiante/Create"
+@using Models
+@using Services
+@inject EstudiantesServices estudiantesService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Crear Estudiante</PageTitle>
+
+<EditForm Model="Estudiante" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        @if (!string.IsNullOrEmpty(Mensaje))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @Mensaje
+                <button type="button" class="btn-close" @onclick="() => Mensaje = string.Empty"></button>
+            </div>
+        }
+
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h5 class="card-title">Nuevo Estudiante</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Nombre Completo</label>
+                    <InputText class="form-control" @bind-Value="Estudiante.EstudiantesNames" />
+                    <ValidationMessage For="@(() => Estudiante.EstudiantesNames)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Correo Electrónico</label>
+                    <InputText class="form-control" @bind-Value="Estudiante.Emails" />
+                    <ValidationMessage For="@(() => Estudiante.Emails)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Edad</label>
+                    <InputNumber class="form-control" @bind-Value="Estudiante.Edad" onkeydown="return event.keyCode !== 69" />
+                    <ValidationMessage For="@(() => Estudiante.Edad)" />
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-floppy"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Estudiantes Estudiante { get; set; } = new Estudiantes();
+    public string Mensaje { get; set; } = string.Empty;
+
+    private async Task Guardar()
+    {
+        Mensaje = string.Empty;
+
+        if (await estudiantesService.ExisteEstudianteConName(Estudiante.EstudiantesNames, Estudiante.EstudianteId))
+        {
+            Mensaje = "Ya existe un estudiante con ese nombre.";
+            return;
+        }
+
+        var pasoGuardarEstudiante = await estudiantesService.Guardar(this.Estudiante);
+        if (pasoGuardarEstudiante)
+        {
+            NavigationManager.NavigateTo("/Estudiante/Index");
+        }
+        else
+        {
+            Mensaje = "No se pudo guardar el estudiante.";
+        }
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/Estudiante/Index");
+    }
+}

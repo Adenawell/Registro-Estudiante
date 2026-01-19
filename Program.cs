@@ -1,10 +1,20 @@
+using Microsoft.EntityFrameworkCore;
 using Registro_Estudiante.Components;
+using Registro_Estudiante.DAL;
+using Registro_Estudiante.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var connectionString = builder.Configuration.GetConnectionString("SqlConStr");
+
+builder.Services.AddDbContextFactory<Contexto>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<EstudiantesServices>();
 
 var app = builder.Build();
 
