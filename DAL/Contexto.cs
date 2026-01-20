@@ -8,5 +8,7 @@ namespace Registro_Estudiante.DAL
         public Contexto(DbContextOptions<Contexto> options) : base(options) { }
 
         public DbSet<Estudiantes> Estudiantes { get; set; } = null!;
+
+        public DbSet<Registro_Asignaturas.Models.Asignaturas> Asignaturas { get; set; } = null!;
     }
 }

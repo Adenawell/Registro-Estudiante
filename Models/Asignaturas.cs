@@ -12,7 +12,7 @@ public class Asignaturas
     [Required(ErrorMessage = "El codigo es obligaritorio")]
     public int Codigo { get; set; }
 
-    [Required(ErrorMessage = "")]
+    [Required(ErrorMessage = "El nombre de la asginatura es obligotorio")]
     public string Nombre { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "La aula de la asignatura es obligatoria")]
