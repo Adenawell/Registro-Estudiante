@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Pages\Asignaturas\" />
     <Folder Include="Components\Pages\Consultas\" />
     <Folder Include="Components\Pages\Registros\" />
   </ItemGroup>
