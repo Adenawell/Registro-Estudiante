@@ -1,0 +1,128 @@
+﻿@page "/Asignatura/Edit/{AsignaturaId:int}"
+@using Registro_Asignaturas.Models
+@using Registro_Asignaturas.Services
+@inject AsignaturasServices asignaturasService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Modificar Asignatura</PageTitle>
+
+<EditForm Model="Asignatura" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container mt-4">
+        @if (!string.IsNullOrEmpty(Mensaje))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @Mensaje
+                <button type="button" class="btn-close" @onclick="() => Mensaje = string.Empty"></button>
+            </div>
+        }
+
+        <div class="card shadow-lg">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title"><i class="bi bi-pencil-square"></i> Editar Asignatura</h5>
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="Eliminar">
+                    <i class="bi bi-trash"></i> Eliminar Asignatura
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">ID Registro</label>
+                        <InputNumber class="form-control" @bind-Value="Asignatura.AsignaturaId" readonly />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Código</label>
+                        <InputNumber class="form-control" @bind-Value="Asignatura.Codigo" />
+                        <ValidationMessage For="@(() => Asignatura.Codigo)" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Créditos</label>
+                        <InputNumber class="form-control" @bind-Value="Asignatura.Creditos" />
+                        <ValidationMessage For="@(() => Asignatura.Creditos)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre de la Asignatura</label>
+                    <InputText class="form-control" @bind-Value="Asignatura.Nombre" />
+                    <ValidationMessage For="@(() => Asignatura.Nombre)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Aula</label>
+                    <InputText class="form-control" @bind-Value="Asignatura.Aula" />
+                    <ValidationMessage For="@(() => Asignatura.Aula)" />
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-floppy"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int AsignaturaId { get; set; }
+
+    public Asignaturas Asignatura { get; set; } = new Asignaturas();
+    public string Mensaje { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Buscamos la asignatura por el ID recibido en el parámetro
+        var asignaturas = await asignaturasService.Listar(a => a.AsignaturaId == AsignaturaId);
+        if (asignaturas.Any())
+        {
+            Asignatura = asignaturas.First();
+        }
+        else
+        {
+            Volver();
+        }
+    }
+
+    private async Task Guardar()
+    {
+        Mensaje = string.Empty;
+
+        if (await asignaturasService.ExisteAsignatura(Asignatura.Nombre, Asignatura.Codigo, Asignatura.AsignaturaId))
+        {
+            Mensaje = "Ya existe otra asignatura con este nombre o código.";
+            return;
+        }
+
+        if (await asignaturasService.Guardar(this.Asignatura))
+        {
+            Volver();
+        }
+        else
+        {
+            Mensaje = "No se pudo modificar la asignatura.";
+        }
+    }
+
+    private async Task Eliminar()
+    {
+        var eliminado = await asignaturasService.Eliminar(Asignatura.AsignaturaId);
+        if (eliminado)
+        {
+            Volver();
+        }
+        else
+        {
+            Mensaje = "Ocurrió un error al intentar eliminar la asignatura.";
+        }
+    }
+
+    private void Volver() => NavigationManager.NavigateTo("/Asignatura/Index");
+}
