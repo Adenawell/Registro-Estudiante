@@ -6,7 +6,7 @@ public class Asignaturas
 {
     [Key]
 
-    public int AsinaturaId { get; set; }
+    public int AsignaturaId { get; set; }
     
 
     [Required(ErrorMessage = "El codigo es obligaritorio")]
