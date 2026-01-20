@@ -1,6 +1,9 @@
 ﻿@page "/Asignatura/Edit/{AsignaturaId:int}"
+
 @using Registro_Asignaturas.Models
 @using Registro_Asignaturas.Services
+@namespace Registro_Estudiante.Components.Pages.Asignaturas
+
 @inject AsignaturasServices asignaturasService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -79,7 +82,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Buscamos la asignatura por el ID recibido en el parámetro
+
         var asignaturas = await asignaturasService.Listar(a => a.AsignaturaId == AsignaturaId);
         if (asignaturas.Any())
         {
@@ -94,6 +97,7 @@
     private async Task Guardar()
     {
         Mensaje = string.Empty;
+
 
         if (await asignaturasService.ExisteAsignatura(Asignatura.Nombre, Asignatura.Codigo, Asignatura.AsignaturaId))
         {

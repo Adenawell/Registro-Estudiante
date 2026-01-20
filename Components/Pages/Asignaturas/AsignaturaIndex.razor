@@ -2,6 +2,7 @@
 
 @using Registro_Asignaturas.Models
 @using Registro_Asignaturas.Services
+@namespace Registro_Estudiante.Components.Pages.Asignaturas
 
 @inject AsignaturasServices asignaturasService
 @inject NavigationManager NavigationManager
@@ -90,7 +91,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         ListaAsignaturas = await asignaturasService.Listar(a => a.AsignaturaId > 0);
     }
 

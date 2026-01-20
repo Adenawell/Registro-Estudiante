@@ -1,5 +1,6 @@
 ﻿using Registro_Estudiante.Models;
 using Microsoft.EntityFrameworkCore;
+using Registro_Asignaturas.Models;
 
 namespace Registro_Estudiante.DAL
 {
@@ -9,6 +10,6 @@ namespace Registro_Estudiante.DAL
 
         public DbSet<Estudiantes> Estudiantes { get; set; } = null!;
 
-        public DbSet<Registro_Asignaturas.Models.Asignaturas> Asignaturas { get; set; } = null!;
+        public DbSet<Asignaturas> Asignaturas { get; set; } = null!;
     }
 }
