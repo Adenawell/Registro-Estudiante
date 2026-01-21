@@ -11,8 +11,8 @@ using Registro_Estudiante.DAL;
 namespace Registro_Estudiante.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20260120234956_asignaturas")]
-    partial class asignaturas
+    [Migration("20260121003817_SincronizarTablas")]
+    partial class SincronizarTablas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

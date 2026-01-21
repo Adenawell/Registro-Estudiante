@@ -5,7 +5,7 @@
 namespace Registro_Estudiante.Migrations
 {
     /// <inheritdoc />
-    public partial class asignaturas : Migration
+    public partial class SincronizarTablas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,21 +24,6 @@ namespace Registro_Estudiante.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Asignaturas", x => x.AsignaturaId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Estudiantes",
-                columns: table => new
-                {
-                    EstudianteId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EstudiantesNames = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Emails = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Edad = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Estudiantes", x => x.EstudianteId);
                 });
         }
 
