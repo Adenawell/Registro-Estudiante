@@ -11,8 +11,8 @@ using Registro_Estudiante.DAL;
 namespace Registro_Estudiante.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20260121003817_SincronizarTablas")]
-    partial class SincronizarTablas
+    [Migration("20260121005546_MigracionFinal")]
+    partial class MigracionFinal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,9 +39,8 @@ namespace Registro_Estudiante.Migrations
                     b.Property<int>("Codigo")
                         .HasColumnType("int");
 
-                    b.Property<string>("Creditos")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Creditos")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()

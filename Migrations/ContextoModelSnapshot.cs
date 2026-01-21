@@ -36,9 +36,8 @@ namespace Registro_Estudiante.Migrations
                     b.Property<int>("Codigo")
                         .HasColumnType("int");
 
-                    b.Property<string>("Creditos")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Creditos")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()

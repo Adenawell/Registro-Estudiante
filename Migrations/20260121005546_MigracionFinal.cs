@@ -5,7 +5,7 @@
 namespace Registro_Estudiante.Migrations
 {
     /// <inheritdoc />
-    public partial class SincronizarTablas : Migration
+    public partial class MigracionFinal : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace Registro_Estudiante.Migrations
                     Codigo = table.Column<int>(type: "int", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Aula = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Creditos = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Creditos = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
