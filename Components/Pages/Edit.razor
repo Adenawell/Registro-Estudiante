@@ -22,7 +22,7 @@
         <div class="card shadow-lg">
             <div class="card-header d-flex justify-content-between">
                 <h5 class="card-title"><i class="bi bi-pencil-square"></i> Editar Registro</h5>
-                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="Eliminar">
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="MostrarModal">
                     <i class="bi bi-trash"></i> Eliminar Estudiante
                 </button>
             </div>
@@ -64,12 +64,35 @@
     </div>
 </EditForm>
 
+@if (ConfirmarEliminacion)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="fs-5">¿Deseas eliminar este estudiante?</p>
+                    <p class="fw-bold text-uppercase">@Estudiante.EstudiantesNames</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter]
     public int EstudianteId { get; set; }
 
     public Estudiantes Estudiante { get; set; } = new Estudiantes();
     public string Mensaje { get; set; } = string.Empty;
+    public bool ConfirmarEliminacion { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,12 +127,21 @@
         }
     }
 
+    private void MostrarModal() => ConfirmarEliminacion = true;
+
+    private void CerrarModal() => ConfirmarEliminacion = false;
+
     private async Task Eliminar()
     {
+        ConfirmarEliminacion = false;
         var eliminado = await estudiantesService.Eliminar(Estudiante.EstudianteId);
         if (eliminado)
         {
             Volver();
+        }
+        else
+        {
+            Mensaje = "Ocurrió un error al intentar eliminar el estudiante.";
         }
     }
 
