@@ -10,10 +10,10 @@
 
 <PageTitle>Modificar Asignatura</PageTitle>
 
-<EditForm Model="Asignatura" OnValidSubmit="Guardar">
-    <DataAnnotationsValidator />
+<div class="container mt-4">
+    <EditForm Model="Asignatura" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
 
-    <div class="container mt-4">
         @if (!string.IsNullOrEmpty(Mensaje))
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -23,9 +23,9 @@
         }
 
         <div class="card shadow-lg">
-            <div class="card-header d-flex justify-content-between">
-                <h5 class="card-title"><i class="bi bi-pencil-square"></i> Editar Asignatura</h5>
-                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="Eliminar">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="bi bi-pencil-square"></i> Editar Asignatura</h5>
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="MostrarModal">
                     <i class="bi bi-trash"></i> Eliminar Asignatura
                 </button>
             </div>
@@ -70,8 +70,30 @@
                 </button>
             </div>
         </div>
+    </EditForm>
+</div>
+
+@if (ConfirmarEliminacion)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="fs-5">¿Deseas eliminar esta asignatura?</p>
+                    <p class="fw-bold text-uppercase">@Asignatura.Nombre</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+                </div>
+            </div>
+        </div>
     </div>
-</EditForm>
+}
 
 @code {
     [Parameter]
@@ -79,12 +101,12 @@
 
     public Asignaturas Asignatura { get; set; } = new Asignaturas();
     public string Mensaje { get; set; } = string.Empty;
+    public bool ConfirmarEliminacion { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-
         var asignaturas = await asignaturasService.Listar(a => a.AsignaturaId == AsignaturaId);
-        if (asignaturas.Any())
+        if (asignaturas != null && asignaturas.Any())
         {
             Asignatura = asignaturas.First();
         }
@@ -97,7 +119,6 @@
     private async Task Guardar()
     {
         Mensaje = string.Empty;
-
 
         if (await asignaturasService.ExisteAsignatura(Asignatura.Nombre, Asignatura.Codigo, Asignatura.AsignaturaId))
         {
@@ -115,8 +136,13 @@
         }
     }
 
+    private void MostrarModal() => ConfirmarEliminacion = true;
+
+    private void CerrarModal() => ConfirmarEliminacion = false;
+
     private async Task Eliminar()
     {
+        ConfirmarEliminacion = false;
         var eliminado = await asignaturasService.Eliminar(Asignatura.AsignaturaId);
         if (eliminado)
         {
