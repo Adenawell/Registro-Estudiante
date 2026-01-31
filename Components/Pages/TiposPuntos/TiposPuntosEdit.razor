@@ -58,14 +58,14 @@
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Color</label>
-                        @* use el selector de color nativo para que el usuario no tenga que escribir el codigo hex 🎨 *@
+                        @* use el selector de color nativo para que el usuario no tenga que escribir el codigo hex *@
                         <input type="color" @bind="TipoPunto.Color" class="form-control form-control-color w-100" />
                         <ValidationMessage For="@(() => TipoPunto.Color)" />
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Icono</label>
-                        @* cambie el input de texto por este select para que elijan uno de los 3 iconos de bootstrap ✅ *@
+                        @* cambie el input de texto por este select para que elijan uno de los 3 iconos de bootstrap *@
                         <InputSelect class="form-select" @bind-Value="TipoPunto.Icono">
                             <option value="">-- Seleccione --</option>
                             <option value="bi bi-star-fill">Estrella</option>
