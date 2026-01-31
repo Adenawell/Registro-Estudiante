@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Registro_Estudiante.Components;
 using Registro_Estudiante.DAL;
 using Registro_Estudiante.Services;
+using Registro_TiposPuntos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
