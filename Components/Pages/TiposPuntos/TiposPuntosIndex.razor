@@ -1,0 +1,132 @@
+﻿@page "/TiposPuntos/Index"
+
+@using Registro_Puntos.Models
+@using Registro_TiposPuntos.Services
+@namespace Registro_Estudiante.Components.Pages.TiposPuntos
+
+@inject TiposPuntosServices tiposPuntosService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Tipos de Puntos</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title m-0">Registro de Tipos de Puntos</h5>
+            <button class="btn btn-primary" @onclick="IrACrear">
+                <i class="bi bi-plus-square-fill"></i>
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3 align-items-end">
+                <div class="col-md-3">
+                    <label>Filtrar por</label>
+                    <select class="form-select" @bind="Filtro">
+                        <option value="">Elija una opción</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="Descripcion">Descripción</option>
+                    </select>
+                </div>
+
+                <div class="col-md-9">
+                    <label>Búsqueda</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar..." @bind="ValorFiltro" />
+                        <button class="btn btn-outline-primary" @onclick="Buscar">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Puntos</th>
+                            <th>Color</th>
+                            <th>Icono</th>
+                            <th>Estado</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ListaTiposPuntos != null)
+                        {
+                            @foreach (var item in ListaTiposPuntos)
+                            {
+                                <tr>
+                                    <td>@item.TipoId</td>
+                                    <td class="text-start">@item.Nombre</td>
+                                    <td class="text-start">@item.Descripcion</td>
+                                    <td>@item.ValorPuntos</td>
+                                    <td>
+                                        <span class="badge" style="background-color: @item.Color">@item.Color</span>
+                                    </td>
+                                    <td><i class="@item.Icono"></i></td>
+                                    <td>
+                                        @if (item.Activo == true)
+                                        {
+                                            <span class="text-success">Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Inactivo</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" @onclick="() => IrAEditar(item.TipoId)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <label><strong>Cantidad:</strong> @(ListaTiposPuntos?.Count ?? 0)</label>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<TiposPuntos> ListaTiposPuntos { get; set; } = new List<TiposPuntos>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTiposPuntos = await tiposPuntosService.Listar(t => t.TipoId > 0);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(ValorFiltro))
+        {
+            if (Filtro == "Nombre")
+            {
+                ListaTiposPuntos = await tiposPuntosService.Listar(t => t.Nombre.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+            else if (Filtro == "Descripcion")
+            {
+                ListaTiposPuntos = await tiposPuntosService.Listar(t => t.Descripcion.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+        }
+        else
+        {
+            ListaTiposPuntos = await tiposPuntosService.Listar(t => t.TipoId > 0);
+        }
+    }
+
+    private void IrACrear() => NavigationManager.NavigateTo("/TiposPuntos/Create");
+    private void IrAEditar(int id) => NavigationManager.NavigateTo($"/TiposPuntos/Edit/{id}");
+}
