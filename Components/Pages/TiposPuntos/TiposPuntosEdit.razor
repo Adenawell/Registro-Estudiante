@@ -68,7 +68,6 @@
                 </div>
 
                 <div class="form-check mb-3">
-                    @* Se usa bind-Value directo al bool? *@
                     <InputCheckbox class="form-check-input" @bind-Value="ActivoTemporal" id="activoCheck" />
                     <label class="form-check-label" for="activoCheck">Activo</label>
                 </div>
@@ -113,7 +112,6 @@
     public string Mensaje { get; set; } = string.Empty;
     public bool ConfirmarEliminacion { get; set; } = false;
 
-    // Para manejar el checkbox del bool?
     private bool ActivoTemporal
     {
         get => TipoPunto.Activo ?? false;

@@ -1,16 +1,15 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Registro_Estudiante.Models;
-using Registro_Puntos.DAL;
+using Registro_Estudiante.DAL;
 using Registro_Puntos.Models;
 
 namespace Registro_TiposPuntos.Services
 {
     public class TiposPuntosServices
     {
-        private readonly IDbContextFactory<ContextoTiposPuntos> DbFactory;
+        private readonly IDbContextFactory<Contexto> DbFactory;
 
-        public TiposPuntosServices(IDbContextFactory<ContextoTiposPuntos> dbFactory)
+        public TiposPuntosServices(IDbContextFactory<Contexto> dbFactory)
         {
             DbFactory = dbFactory;
         }
@@ -42,8 +41,7 @@ namespace Registro_TiposPuntos.Services
         public async Task<TiposPuntos?> Buscar(int id)
         {
             await using var dbContext = await DbFactory.CreateDbContextAsync();
-            return await dbContext.TiposPuntos
-                .FirstOrDefaultAsync(t => t.TipoId == id);
+            return await dbContext.TiposPuntos.FirstOrDefaultAsync(t => t.TipoId == id);
         }
 
         public async Task<bool> Eliminar(int id)
@@ -74,8 +72,7 @@ namespace Registro_TiposPuntos.Services
         {
             await using var dbContext = await DbFactory.CreateDbContextAsync();
             return await dbContext.TiposPuntos
-                .AnyAsync(t => t.Nombre.ToLower() == nombre.ToLower()
-                          && t.TipoId != id);
+                .AnyAsync(t => t.Nombre.ToLower() == nombre.ToLower() && t.TipoId != id);
         }
     }
 }
