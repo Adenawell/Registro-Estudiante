@@ -1,0 +1,113 @@
+﻿@page "/TiposPuntos/Create"
+@using Registro_Puntos.Models
+@using Registro_TiposPuntos.Services
+@inject TiposPuntosServices tiposPuntosService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Crear Tipo de Punto</PageTitle>
+
+<EditForm Model="TipoPunto" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container mt-4">
+        @if (!string.IsNullOrEmpty(Mensaje))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @Mensaje
+                <button type="button" class="btn-close" @onclick="() => Mensaje = string.Empty"></button>
+            </div>
+        }
+
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h5 class="card-title">Nuevo Tipo de Punto</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        <InputText class="form-control" @bind-Value="TipoPunto.Nombre" />
+                        <ValidationMessage For="@(() => TipoPunto.Nombre)" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Valor Puntos</label>
+                        <InputNumber class="form-control" @bind-Value="TipoPunto.ValorPuntos" />
+                        <ValidationMessage For="@(() => TipoPunto.ValorPuntos)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <InputTextArea class="form-control" @bind-Value="TipoPunto.Descripcion" />
+                    <ValidationMessage For="@(() => TipoPunto.Descripcion)" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Color</label>
+                        <InputText class="form-control" @bind-Value="TipoPunto.Color" />
+                        <ValidationMessage For="@(() => TipoPunto.Color)" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Icono</label>
+                        <InputText class="form-control" @bind-Value="TipoPunto.Icono" />
+                        <ValidationMessage For="@(() => TipoPunto.Icono)" />
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <InputCheckbox class="form-check-input" @bind-Value="ActivoTemporal" id="activoCheck" />
+                    <label class="form-check-label" for="activoCheck">Activo</label>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-floppy"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public TiposPuntos TipoPunto { get; set; } = new TiposPuntos { Activo = true };
+    public string Mensaje { get; set; } = string.Empty;
+
+    private bool ActivoTemporal
+    {
+        get => TipoPunto.Activo ?? false;
+        set => TipoPunto.Activo = value;
+    }
+
+    private async Task Guardar()
+    {
+        Mensaje = string.Empty;
+
+        if (await tiposPuntosService.ExisteTipoConNombre(TipoPunto.Nombre, TipoPunto.TipoId))
+        {
+            Mensaje = "Ya existe un registro con este nombre.";
+            return;
+        }
+
+        var pasoGuardar = await tiposPuntosService.Guardar(this.TipoPunto);
+        if (pasoGuardar)
+        {
+            Volver();
+        }
+        else
+        {
+            Mensaje = "No se pudo guardar el registro.";
+        }
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/TiposPuntos/Index");
+    }
+}
