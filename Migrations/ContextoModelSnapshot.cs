@@ -44,6 +44,41 @@ namespace Registro_Estudiante.Migrations
 
                     b.ToTable("Estudiantes");
                 });
+
+            modelBuilder.Entity("Registro_Puntos.Models.TiposPuntos", b =>
+                {
+                    b.Property<int>("TipoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipoId"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ValorPuntos")
+                        .HasColumnType("int");
+
+                    b.HasKey("TipoId");
+
+                    b.ToTable("TiposPuntos");
+                });
 #pragma warning restore 612, 618
         }
     }
