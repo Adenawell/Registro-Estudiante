@@ -10,8 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Usamos una sola cadena de conexión para evitar el error de ConnectionString.
-// Asegúrate de que "SqlAzureConnection" sea el nombre que tienes en tu appsettings.json
+
 var connectionString = builder.Configuration.GetConnectionString("SqlConStr");
 
 builder.Services.AddDbContextFactory<Contexto>(options =>
