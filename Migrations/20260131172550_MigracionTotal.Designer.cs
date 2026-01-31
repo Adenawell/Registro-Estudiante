@@ -11,8 +11,8 @@ using Registro_Estudiante.DAL;
 namespace Registro_Estudiante.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20260118170027_Inicial")]
-    partial class Inicial
+    [Migration("20260131172550_MigracionTotal")]
+    partial class MigracionTotal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,41 @@ namespace Registro_Estudiante.Migrations
                     b.HasKey("EstudianteId");
 
                     b.ToTable("Estudiantes");
+                });
+
+            modelBuilder.Entity("Registro_Puntos.Models.TiposPuntos", b =>
+                {
+                    b.Property<int>("TipoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipoId"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ValorPuntos")
+                        .HasColumnType("int");
+
+                    b.HasKey("TipoId");
+
+                    b.ToTable("TiposPuntos");
                 });
 #pragma warning restore 612, 618
         }
