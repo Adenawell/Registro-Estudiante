@@ -55,14 +55,23 @@
                         <InputNumber class="form-control" @bind-Value="TipoPunto.ValorPuntos" />
                         <ValidationMessage For="@(() => TipoPunto.ValorPuntos)" />
                     </div>
+
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Color</label>
-                        <InputText class="form-control" @bind-Value="TipoPunto.Color" />
+                        @* use el selector de color nativo para que el usuario no tenga que escribir el codigo hex 🎨 *@
+                        <input type="color" @bind="TipoPunto.Color" class="form-control form-control-color w-100" />
                         <ValidationMessage For="@(() => TipoPunto.Color)" />
                     </div>
+
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Icono</label>
-                        <InputText class="form-control" @bind-Value="TipoPunto.Icono" />
+                        @* cambie el input de texto por este select para que elijan uno de los 3 iconos de bootstrap ✅ *@
+                        <InputSelect class="form-select" @bind-Value="TipoPunto.Icono">
+                            <option value="">-- Seleccione --</option>
+                            <option value="bi bi-star-fill">Estrella</option>
+                            <option value="bi bi-person-check-fill">Asistencia</option>
+                            <option value="bi bi-trophy-fill">Trofeo</option>
+                        </InputSelect>
                         <ValidationMessage For="@(() => TipoPunto.Icono)" />
                     </div>
                 </div>

@@ -45,14 +45,24 @@
                 </div>
 
                 <div class="row">
+                    @* puse este div para el selector de color asi se ve mas bacano*@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Color</label>
-                        <InputText class="form-control" @bind-Value="TipoPunto.Color" />
+                        @* use el input type color de html para que el usuario elija el tono facil sin poner codigos*@
+                        <input type="color" @bind="TipoPunto.Color" class="form-control form-control-color w-100" />
                         <ValidationMessage For="@(() => TipoPunto.Color)" />
                     </div>
+
+                    @* este otro div es para elegir el icono con el select*@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Icono</label>
-                        <InputText class="form-control" @bind-Value="TipoPunto.Icono" />
+                        @* cambie el cuadro de texto por un select para que solo elijan estos 3 de bootstrap *@
+                        <InputSelect class="form-select" @bind-Value="TipoPunto.Icono">
+                            <option value="">-- Seleccione --</option>
+                            <option value="bi bi-star-fill">Estrella</option>
+                            <option value="bi bi-person-check-fill">Asistencia</option>
+                            <option value="bi bi-trophy-fill">Trofeo</option>
+                        </InputSelect>
                         <ValidationMessage For="@(() => TipoPunto.Icono)" />
                     </div>
                 </div>
@@ -76,7 +86,8 @@
 </EditForm>
 
 @code {
-    public TiposPuntos TipoPunto { get; set; } = new TiposPuntos { Activo = true };
+    // le puse un color negro por defecto para que no de error al cargar
+    public TiposPuntos TipoPunto { get; set; } = new TiposPuntos { Activo = true, Color = "#000000" };
     public string Mensaje { get; set; } = string.Empty;
 
     private bool ActivoTemporal
