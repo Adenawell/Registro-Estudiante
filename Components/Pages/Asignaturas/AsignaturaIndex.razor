@@ -1,0 +1,125 @@
+﻿@page "/Asignatura/Index"
+
+@using Registro_Asignaturas.Models
+@using Registro_Asignaturas.Services
+@namespace Registro_Estudiante.Components.Pages.Asignaturas
+
+@inject AsignaturasServices asignaturasService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Asignaturas</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title m-0">Registro de Asignaturas</h5>
+            <button class="btn btn-primary" @onclick="IrACrear">
+                <i class="bi bi-plus-square-fill"></i>
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3 align-items-end">
+                <div class="col-md-3">
+                    <label>Filtrar por</label>
+                    <select class="form-select" @bind="Filtro">
+                        <option value="">Elija una opción</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="Codigo">Código</option>
+                        <option value="Aula">Aula</option>
+                    </select>
+                </div>
+
+                <div class="col-md-9">
+                    <label>Búsqueda</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar..." @bind="ValorFiltro" />
+                        <button class="btn btn-outline-primary" @onclick="Buscar">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Aula</th>
+                            <th>Créditos</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ListaAsignaturas != null)
+                        {
+                            @foreach (var item in ListaAsignaturas)
+                            {
+                                <tr>
+                                    <td>@item.AsignaturaId</td>
+                                    <td>@item.Codigo</td>
+                                    <td class="text-start">@item.Nombre</td>
+                                    <td>@item.Aula</td>
+                                    <td>@item.Creditos</td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" @onclick="() => IrAEditar(item.AsignaturaId)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <label><strong>Cantidad:</strong> @(ListaAsignaturas?.Count ?? 0)</label>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Asignaturas> ListaAsignaturas { get; set; } = new List<Asignaturas>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaAsignaturas = await asignaturasService.Listar(a => a.AsignaturaId > 0);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(ValorFiltro))
+        {
+            if (Filtro == "Nombre")
+            {
+                ListaAsignaturas = await asignaturasService.Listar(a => a.Nombre.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+            else if (Filtro == "Codigo")
+            {
+                if (int.TryParse(ValorFiltro, out int cod))
+                {
+                    ListaAsignaturas = await asignaturasService.Listar(a => a.Codigo == cod);
+                }
+            }
+            else if (Filtro == "Aula")
+            {
+                ListaAsignaturas = await asignaturasService.Listar(a => a.Aula.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+        }
+        else
+        {
+            ListaAsignaturas = await asignaturasService.Listar(a => a.AsignaturaId > 0);
+        }
+    }
+
+    private void IrACrear() => NavigationManager.NavigateTo("/Asignatura/Create");
+    private void IrAEditar(int id) => NavigationManager.NavigateTo($"/Asignatura/Edit/{id}");
+}

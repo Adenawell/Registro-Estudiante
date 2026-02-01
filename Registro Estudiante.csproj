@@ -20,6 +20,7 @@
   <ItemGroup>
     <Folder Include="Components\Pages\Consultas\" />
     <Folder Include="Components\Pages\Registros\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

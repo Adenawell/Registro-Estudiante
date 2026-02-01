@@ -1,0 +1,165 @@
+﻿@page "/TiposPuntos/Edit/{TipoId:int}"
+
+@using Registro_Puntos.Models
+@using Registro_TiposPuntos.Services
+@namespace Registro_Estudiante.Components.Pages.TiposPuntos
+
+@inject TiposPuntosServices tiposPuntosService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Modificar Tipo de Punto</PageTitle>
+
+<div class="container mt-4">
+    <EditForm Model="TipoPunto" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+
+        @if (!string.IsNullOrEmpty(Mensaje))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @Mensaje
+                <button type="button" class="btn-close" @onclick="() => Mensaje = string.Empty"></button>
+            </div>
+        }
+
+        <div class="card shadow-lg">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="bi bi-pencil-square"></i> Editar Tipo de Punto</h5>
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="MostrarModal">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">ID</label>
+                        <InputNumber class="form-control" @bind-Value="TipoPunto.TipoId" readonly />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        <InputText class="form-control" @bind-Value="TipoPunto.Nombre" />
+                        <ValidationMessage For="@(() => TipoPunto.Nombre)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <InputTextArea class="form-control" @bind-Value="TipoPunto.Descripcion" />
+                    <ValidationMessage For="@(() => TipoPunto.Descripcion)" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Puntos</label>
+                        <InputNumber class="form-control" @bind-Value="TipoPunto.ValorPuntos" />
+                        <ValidationMessage For="@(() => TipoPunto.ValorPuntos)" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Color</label>
+                        @* use el selector de color nativo para que el usuario no tenga que escribir el codigo hex *@
+                        <input type="color" @bind="TipoPunto.Color" class="form-control form-control-color w-100" />
+                        <ValidationMessage For="@(() => TipoPunto.Color)" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Icono</label>
+                        @* cambie el input de texto por este select para que elijan uno de los 3 iconos de bootstrap *@
+                        <InputSelect class="form-select" @bind-Value="TipoPunto.Icono">
+                            <option value="">-- Seleccione --</option>
+                            <option value="bi bi-star-fill">Estrella</option>
+                            <option value="bi bi-person-check-fill">Asistencia</option>
+                            <option value="bi bi-trophy-fill">Trofeo</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => TipoPunto.Icono)" />
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <InputCheckbox class="form-check-input" @bind-Value="ActivoTemporal" id="activoCheck" />
+                    <label class="form-check-label" for="activoCheck">Activo</label>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-floppy"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@if (ConfirmarEliminacion)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Eliminar Registro</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Seguro que desea eliminar <strong>@TipoPunto.Nombre</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">No</button>
+                    <button type="button" class="btn btn-danger" @onclick="Eliminar">Sí, Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int TipoId { get; set; }
+    public TiposPuntos TipoPunto { get; set; } = new TiposPuntos();
+    public string Mensaje { get; set; } = string.Empty;
+    public bool ConfirmarEliminacion { get; set; } = false;
+
+    private bool ActivoTemporal
+    {
+        get => TipoPunto.Activo ?? false;
+        set => TipoPunto.Activo = value;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var encontrado = await tiposPuntosService.Buscar(TipoId);
+        if (encontrado != null)
+            TipoPunto = encontrado;
+        else
+            Volver();
+    }
+
+    private async Task Guardar()
+    {
+        if (await tiposPuntosService.ExisteTipoConNombre(TipoPunto.Nombre, TipoPunto.TipoId))
+        {
+            Mensaje = "Este nombre ya está en uso.";
+            return;
+        }
+
+        if (await tiposPuntosService.Guardar(TipoPunto))
+            Volver();
+        else
+            Mensaje = "Error al guardar.";
+    }
+
+    private void MostrarModal() => ConfirmarEliminacion = true;
+    private void CerrarModal() => ConfirmarEliminacion = false;
+
+    private async Task Eliminar()
+    {
+        if (await tiposPuntosService.Eliminar(TipoPunto.TipoId))
+            Volver();
+        else
+            Mensaje = "Error al eliminar.";
+    }
+
+    private void Volver() => NavigationManager.NavigateTo("/TiposPuntos/Index");
+}
