@@ -21,6 +21,33 @@ namespace Registro_Estudiante.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Registro_Asignaturas.Models.Asignaturas", b =>
+                {
+                    b.Property<int>("AsignaturaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AsignaturaId"));
+
+                    b.Property<string>("Aula")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Codigo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Creditos")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AsignaturaId");
+
+                    b.ToTable("Asignaturas");
+                });
+
             modelBuilder.Entity("Registro_Estudiante.Models.Estudiantes", b =>
                 {
                     b.Property<int>("EstudianteId")

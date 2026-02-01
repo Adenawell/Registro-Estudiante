@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Registro_Asignaturas.Services;
 using Registro_Estudiante.Components;
 using Registro_Estudiante.DAL;
 using Registro_Estudiante.Services;
+using Registro_Puntos.Models;
 using Registro_TiposPuntos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,7 @@ builder.Services.AddDbContextFactory<Contexto>(options =>
 
 builder.Services.AddScoped<EstudiantesServices>();
 builder.Services.AddScoped<TiposPuntosServices>();
+builder.Services.AddScoped<AsignaturasServices>();
 
 var app = builder.Build();
 
@@ -29,7 +32,6 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 app.MapStaticAssets();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
